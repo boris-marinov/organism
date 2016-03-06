@@ -1,9 +1,10 @@
 const {List, Record} = require('immutable')
-const environment = require('./environment')
+const Environment = require('./environment')
+const Cell = require('./cell')
 const _ = require('lodash')
 
 //Returns a random element from a list
-const randomElement = (list) => list.get(_.random(list.size - 1))
+const randomElement = (list) => list[(_.random(list.length - 1))]
 
 const organismGenes = {
   speed:60,
@@ -17,11 +18,11 @@ const plantGenes = {
   symbol: 'O'
 }
 
+const cells = [organismGenes, plantGenes].map(Cell)
 
 
-const env = environment({width:10, height:10}).map(generateCell(List([plant, organism])))
-
-debugger
+const env = Environment({width:10, height:10}).map(()=>randomElement(cells)).toString()
+console.log(env)
 
 //(environment) => environment
 const step = (environment) = {

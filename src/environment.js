@@ -15,8 +15,14 @@ module.exports = clazz({
   map (f) {
     return {value: this.value.map((row) => row.map(f))}
   },
-  print () {
-    
+  toString () {
+    return this.map((cell, i) => {
+      if (i === 0){
+        return `/n${cell}`
+      } else{
+        return `${cell}`
+      }
+    }).value.toJS().join(' ')
   }
 })
 

@@ -10,14 +10,19 @@ const intellect = {
 
 module.exports = clazz({
   constructor (genes) {
-    const gender = _.random(1),
-    const energy = 100
-    const health = 100
-    const age = 100
-    return {genes, gender, energy, health, age}
+    return {
+      gender: _.random(1),
+      energy: 100,
+      health: 100,
+      age: 100,
+      genes
+    }
   },
   step (view) {
-     
+    return {x:1, y:1}
+  },
+  toString() {
+    return this.genes.symbol
   }
 })
 
