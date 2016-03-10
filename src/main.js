@@ -6,6 +6,9 @@ const _ = require('lodash')
 //Returns a random element from a list
 const randomElement = (list) => list[(_.random(list.length - 1))]
 
+const returnWithPossibility = (percentage, val) => 
+   _.random(100) < percentage? val : undefined
+
 const organismGenes = {
   speed:60,
   life: 1,
@@ -20,16 +23,14 @@ const plantGenes = {
 
 const cells = [organismGenes, plantGenes].map(Cell)
 
+const debug = (val)=> {debugger; console.log(val);return val}
 
-const env = Environment({width:10, height:10}).map(()=>randomElement(cells)).toString()
-console.log(env)
+const environment = (width, height, density) =>
+  Environment({width, height})
+   .map(() => returnWithPossibility(density, randomElement(cells)))
 
-//(environment) => environment
-const step = (environment) = {
 
-}
+var env = environment(40, 40, 3)
+setInterval(() => {env = env.step(); console.log(env.toString())}, 1000)
 
-//(environment organism) => organismInput
-const createInput = (environment, organism) => {
-  
-}
+

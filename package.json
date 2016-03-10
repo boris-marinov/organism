@@ -4,6 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
+    "start":"node --es_staging --harmony-destructuring src/main.js",
     "build": "babel src/ -d dist",
     "test": "node --harmony_destructuring --es_staging node_modules/nodeunit/bin/nodeunit"
   },
@@ -20,7 +21,7 @@
   "dependencies": {
     "immutable": "^3.7.6",
     "lodash": "^4.6.1",
-    "persistent-class": "^1.0.0"
+    "persistent-class": "^1.1.0"
   },
   "devDependencies": {
     "babel": "^6.5.2",
