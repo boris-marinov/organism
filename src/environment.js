@@ -1,41 +1,51 @@
 const {List, fromJS, toJS} = require('immutable')
 const {range} = require('lodash')
-
 const clazz = require('persistent-class').create
+const matrix = require('./matrix')
+const _ = require('lodash')
+
+//Returns a random element from a list
+const randomElement = (list) => list[(_.random(list.length - 1))]
+
+const returnWithPossibility = (percentage, val) => 
+   _.random(100) < percentage? val : undefined
+
 const environmentParams = {
   width:100,
-  height:100
+  height:100,
+  density: 1
 }
+
+const lens = (key, fn) =>
+  function(...args) {
+    const modification = {}
+    modification[key] = this[key][fn](...args)
+    return this.set(modification)
+  }
+
+const alias = (key, fn) =>
+  function(...args) {
+    return this[key][fn](...args)
+  }
 
 module.exports = clazz({
   constructor (userParams) {
     const params = Object.assign({}, environmentParams, userParams)
-    const value = List().setSize(params.height).map((row) => List().setSize(params.width).map(() => null))
-    return this.set({value, params})
-  },
-  getNeighbours({ coordinates: [x, y], range}){
-    return this.slice({x: [x-1, y-1], y: [x+1, y+1]})
-  },
-  fromMatrix(list) {
-    return this.set({value:fromJS(list)})
-  },
-  toMatrix() {
-    return this.value.toJS()
-  },
-  slice ({x:[widthFrom, heightFrom], y: [widthTo, heightTo]}){
-    const newValue = this.value.slice(heightFrom, heightTo + 1).map((row) => row.slice(widthFrom, widthTo + 1))
-    return this.set({value:newValue})
-  },
-  map (f) {
-    return this.set({value: this.value.map((row) => row.map(f))})
+    const value = List().setSize(params.height)
+      .map((row) => List().setSize(params.width))
+    const matrix = Matrix(value)
+      .map(() => returnWithPossibility(density, randomElement(cells)))
+    return this.set({params, matrix})
   },
   step () {
     return this
   },
   toString () {
-    return this.value.map((row) => {
+    return this.matrix.value.map((row) => {
       return row.map((cell) => cell !== undefined ? cell.toString():' ').join(' ')
     }).toJS().join('\n')
   },
+  fromMatrix:lens('matrix', 'fromJS'),
+  toMatrix: alias('matrix', 'toJS'),
+  map: lens('matrix', 'map')
 })
-
