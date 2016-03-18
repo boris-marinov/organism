@@ -1,7 +1,7 @@
 const {List, fromJS, toJS} = require('immutable')
 const {range} = require('lodash')
-const clazz = require('persistent-class').create
-const matrix = require('./matrix')
+const {clazz, getter, setter, alias, lens, modify} = require('persistent-clazz')
+const Matrix = require('./matrix')
 const _ = require('lodash')
 
 //Returns a random element from a list
@@ -16,29 +16,21 @@ const environmentParams = {
   density: 1
 }
 
-const lens = (key, fn) =>
-  function(...args) {
-    const modification = {}
-    modification[key] = this[key][fn](...args)
-    return this.set(modification)
-  }
-
-const alias = (key, fn) =>
-  function(...args) {
-    return this[key][fn](...args)
-  }
-
 module.exports = clazz({
-  constructor (userParams) {
+  constructor (userParams, cells) {
     const params = Object.assign({}, environmentParams, userParams)
     const value = List().setSize(params.height)
       .map((row) => List().setSize(params.width))
     const matrix = Matrix(value)
-      .map(() => returnWithPossibility(density, randomElement(cells)))
-    return this.set({params, matrix})
+      .map(() => returnWithPossibility(params.density, randomElement(cells)))
+    return {params, matrix}
   },
   step () {
     return this
+    return this.matrix.map((value, x, y) => {
+      const action = value.react(this.neighbours({coordinates:[x,y], range:1})) 
+      return {action}
+    })
   },
   toString () {
     return this.matrix.value.map((row) => {

@@ -1,5 +1,5 @@
 const {Record, Range, List} = require('immutable')
-const clazz = require('persistent-class').create
+const {clazz, getter, setter, alias, lens, modify} = require('persistent-clazz')
 const _ = require('lodash')
 
 const genders = ['m', 'f']
