@@ -10,10 +10,6 @@ exports.toJS = (test) => {
   test.deepEqual(testEnv.toJS(data), data)
   test.done()
 }
-exports.get = (test) => {
-  test.equal(testEnv.get([0,1]), 2)
-  test.done()
-}
 exports.put = (test) => {
   const env = testEnv
     .put({coordinates:[0,1], value: 'foo'})
@@ -36,18 +32,10 @@ exports.reduce = (test) => {
 }
 
 exports.slice = (test) => {
+  test.equal(testEnv.get([3,0]), 4)
   test.deepEqual(testEnv.slice({x: [0, 0], y: [3, 0]}).toJS(), [[1, 2, 3, 4]])
   test.deepEqual(testEnv.slice({x: [0, 0], y: [1, 1]}).toJS(), [[1, 2], [5, 6]])
   test.done()
 }
 
-
-exports.neighbours = (test) => {
-  const neighbours = testEnv.neighbours({coordinates:[1, 1], range: 1}).toJS()
-  test.deepEqual(neighbours, [[1, 2, 3], [5,6,7], [9, 10, 11]])
-
-  const edgeNeighbours = testEnv.neighbours({coordinates:[0, 0], range: 1}).toJS()
-  test.deepEqual(edgeNeighbours, [ [1, 2], [5,6] ])
-  test.done()
-}
 

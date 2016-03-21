@@ -7,9 +7,6 @@ module.exports = clazz({
   constructor (value) {
     return {value}
   },
-  neighbours({ coordinates: [x, y], range}) {
-    return this.slice({x: [0, 0], y: [x+1, y+1]})
-  },
   fromJS(list) {
     return modify(this, {value:fromJS(list)})
   },
@@ -22,15 +19,15 @@ module.exports = clazz({
     return modify(this, {value:newValue})
   },
   get([x,y]) {
-    return this.value.get(x).get(y)
+    return this.value.get(y).get(x)
   },
   put({coordinates:[x, y], value}) {
-    const newMatrix = value = this.value.set(x, this.value.get(x).set(y, value))
+    const newMatrix = this.value.set(y, this.value.get(y).set(x, value))
     return modify(this, {value: newMatrix})
   },
   reduce (f, id) {
-    const value = this.value.reduce((obj, row, x) => {
-        row.forEach((element, y) => {
+    const value = this.value.reduce((obj, row, y) => {
+        row.forEach((element, x) => {
           obj = f(obj, element, [x, y])
         })
         return obj

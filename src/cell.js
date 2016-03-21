@@ -21,11 +21,10 @@ module.exports = clazz({
     })
   },
   step (view) {
-    return [ ]
+    return view.goTo(view[0])
   },
   toString() {
     return this.genes.symbol
   }
 })
-
 

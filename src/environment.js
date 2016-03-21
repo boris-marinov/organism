@@ -3,6 +3,7 @@ const {range} = require('lodash')
 const {clazz, getter, setter, alias, lens, modify} = require('persistent-clazz')
 const Matrix = require('./matrix')
 const _ = require('lodash')
+const View = require('./view')
 
 //Returns a random element from a list
 const randomElement = (list) => list[(_.random(list.length - 1))]
@@ -27,10 +28,16 @@ module.exports = clazz({
   },
   step () {
     return this
-    return this.matrix.map((value, x, y) => {
-      const action = value.react(this.neighbours({coordinates:[x,y], range:1})) 
-      return {action}
+    return this.reduce((newEnvironment, value, coordinates) => {
+      const moveCoordinates = value.react(this.view(coordinates, 1))
+      return newEnvironment.placeCell(coordinates, moveCoordinates, cell)
     })
+  },
+  placeCell (coordinates, moveCoordinates, cell) {
+         
+  },
+  view (coordinates, range) {
+    return View(this.matrix, coordinates, range)
   },
   toString () {
     return this.matrix.value.map((row) => {
@@ -39,5 +46,5 @@ module.exports = clazz({
   },
   fromMatrix:lens('matrix', 'fromJS'),
   toMatrix: alias('matrix', 'toJS'),
-  map: lens('matrix', 'map')
+  reduce: lens('matrix', 'reduce')
 })
