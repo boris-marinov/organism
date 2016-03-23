@@ -5,7 +5,7 @@ const data = [[1, 2, 3, 4],
               [9, 10,11,12]]
 const matrix = Matrix().fromJS(data)
 
-exports.neighbours = (test) => {
+exports.constructor = (test) => {
   const neighbours = View(matrix, [1, 1], 1).toJS()
   test.deepEqual(neighbours, [[1, 2, 3], [5,6,7], [9, 10, 11]])
   
@@ -15,5 +15,9 @@ exports.neighbours = (test) => {
 
   const edgeNeighbours = View(matrix, [0, 0], 1).toJS()
   test.deepEqual(edgeNeighbours, [ [1, 2], [5,6] ])
+
+  const rightEdgeNeighbours = View(matrix, [3, 0], 1).toJS()
+  test.deepEqual(rightEdgeNeighbours, [ [3, 4], [7,8] ])
+
   test.done()
 }

@@ -36,6 +36,9 @@ module.exports = clazz({
   },
   map (f) {
     return this.reduce((matrix, value, coordinates) => matrix.put({coordinates, value: f(value, coordinates)}), this)
+  },
+  bounds() {
+    return [this.value.get(0).size, this.value.size]
   }
 })
 
