@@ -6,18 +6,37 @@ const data = [[1, 2, 3, 4],
 const matrix = Matrix().fromJS(data)
 
 exports.constructor = (test) => {
-  const neighbours = View(matrix, [1, 1], 1).toJS()
-  test.deepEqual(neighbours, [[1, 2, 3], [5,6,7], [9, 10, 11]])
+  const view = View(matrix, [1, 1], 1).toJS()
+  test.deepEqual(view, [[1, 2, 3], [5,6,7], [9, 10, 11]])
   
-  const newNeighbours = View(matrix, [2, 1], 1).toJS()
+  const newView = View(matrix, [2, 1], 1).toJS()
   test.equal(matrix.get([2,1]), 7)
-  test.deepEqual(newNeighbours, [[ 2, 3, 4], [6,7,8], [10,11,12]])
+  test.deepEqual(newView, [[ 2, 3, 4], [6,7,8], [10,11,12]])
 
-  const edgeNeighbours = View(matrix, [0, 0], 1).toJS()
-  test.deepEqual(edgeNeighbours, [ [1, 2], [5,6] ])
+  const edgeView = View(matrix, [0, 0], 1).toJS()
+  test.deepEqual(edgeView, [ [1, 2], [5,6] ])
 
-  const rightEdgeNeighbours = View(matrix, [3, 0], 1).toJS()
-  test.deepEqual(rightEdgeNeighbours, [ [3, 4], [7,8] ])
+  const rightEdgeView = View(matrix, [3, 0], 1).toJS()
+  test.deepEqual(rightEdgeView, [ [3, 4], [7,8] ])
 
+  test.done()
+}
+
+exports.range = (test) =>  {
+  test.deepEqual( View(matrix, [0,0], 10).toJS(), data)
+  test.deepEqual( View(matrix, [2,2], 10).toJS(), data)
+  test.done()
+}
+
+exports.offset = (test) => {
+  const checkOffset = (coordinates) => test.equal(View(matrix, coordinates, 1).get([0,0]), matrix.get(coordinates))
+  checkOffset([1,1])
+  checkOffset([2,0])
+  checkOffset([3,0])
+  test.done()
+}
+exports.offset = (test) => {
+  const checkOffset = (coordinates) => test.equal(View(matrix, coordinates, 2).get([0,0]), matrix.get(coordinates))
+  checkOffset([1,1])
   test.done()
 }
