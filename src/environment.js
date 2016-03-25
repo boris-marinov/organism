@@ -19,6 +19,7 @@ const environmentParams = {
 
 module.exports = clazz({
   constructor (userParams, cells) {
+    if (userParams === undefined) {return {}}
     const params = Object.assign({}, environmentParams, userParams)
     const value = List().setSize(params.height)
       .map((row) => List().setSize(params.width))
@@ -26,6 +27,7 @@ module.exports = clazz({
       .map(() => returnWithPossibility(params.density, randomElement(cells)))
     return {params, matrix}
   },
+  matrix: Matrix().fromJS([[]]),
   step () {
     return this
     return this.reduce((newEnvironment, value, coordinates) => {
@@ -44,7 +46,8 @@ module.exports = clazz({
       return row.map((cell) => cell !== undefined ? cell.toString():' ').join(' ')
     }).toJS().join('\n')
   },
-  fromMatrix:lens('matrix', 'fromJS'),
-  toMatrix: alias('matrix', 'toJS'),
-  reduce: lens('matrix', 'reduce')
+  fromJS:lens('matrix', 'fromJS'),
+  toJS: alias('matrix', 'toJS'),
+  reduce: lens('matrix', 'reduce'),
+  get: alias('matrix', 'get')
 })

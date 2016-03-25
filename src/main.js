@@ -21,6 +21,5 @@ const debug = (val)=> {debugger; console.log(val);return val}
 
 const environment = (width, height, density) =>
   Environment({width, height})
-
 var env = environment(40, 40, 3)
 setInterval(() => {env = env.step(); console.log(env.toString())}, 1000)
