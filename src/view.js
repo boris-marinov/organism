@@ -11,14 +11,19 @@ module.exports = clazz({
   constructor( matrix, [x,y], range) {
     const bounds = matrix.bounds()
     const [boundX, boundY] = bounds
-    const offsetX = (x === 0 ? x : range)
-    const offsetY = (y === 0 ? y : range)
+    const offsetX = (x < range ? range - (range - x): range)
+    const offsetY = (y < range ? range - (range - y): range)
     const value = matrix.slice({x: inBounds(bounds, [x - range, y - range]), y: inBounds(bounds, [x + range, y + range])})
     return {value, offsetX, offsetY}
   },
   get([x,y]) {
-    debugger
     return this.value.get([(x + this.offsetX), (y + this.offsetY)])
+  },
+  map (f) {
+    const value = this.value.map((val, [x, y]) => f(val, [(x - this.offsetX), (y - this.offsetY)]))
+    return modify(this, {value})
+  },
+  addOffset ([x, y]){
   },
   follow (objectCoordinates) {
     

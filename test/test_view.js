@@ -19,6 +19,8 @@ exports.constructor = (test) => {
   const rightEdgeView = View(matrix, [3, 0], 1).toJS()
   test.deepEqual(rightEdgeView, [ [3, 4], [7,8] ])
 
+  test.deepEqual(View(matrix, [0, 0], 3).toJS(), data)
+
   test.done()
 }
 
@@ -28,15 +30,36 @@ exports.range = (test) =>  {
   test.done()
 }
 
-exports.offset = (test) => {
-  const checkOffset = (coordinates) => test.equal(View(matrix, coordinates, 1).get([0,0]), matrix.get(coordinates))
+exports.checkOffset = (test) => {
+  const checkOffset = (coordinates) => {
+    debugger
+    test.equal(View(matrix, coordinates, 1).get([0,0]), matrix.get(coordinates))
+  }
   checkOffset([1,1])
   checkOffset([2,0])
   checkOffset([3,0])
+  checkOffset([3,1])
+  checkOffset([4,0])
+  checkOffset([0,2])
+  checkOffset([4,1])
   test.done()
 }
-exports.offset = (test) => {
-  const checkOffset = (coordinates) => test.equal(View(matrix, coordinates, 2).get([0,0]), matrix.get(coordinates))
-  checkOffset([1,1])
+
+const six = View(matrix, [1,1], 10)
+
+exports.get = (test) => {
+  test.equal(six.get([0, -1]), 2)
+  test.equal(six.get([1, 0]), 7)
+  test.equal(six.get([2, 0]), 8)
+  test.equal(six.get([3, 0]), undefined)
+
+  
   test.done()
+}
+exports.map = (test) => {
+  const coordinates = [ [ -1, -1 ], [ 0, -1 ], [ 1, -1 ], [ 2, -1 ] ]
+  test.deepEqual(six.map((val, coordinates) => coordinates).toJS()[0], coordinates)
+  
+  test.done()
+  
 }
