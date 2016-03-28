@@ -1,3 +1,5 @@
+if (global.v8debug)
+  global.v8debug.Debug.setBreakOnException()
 const environment = require('../src/environment')
 
 exports.size = (test) => {
@@ -7,24 +9,28 @@ exports.size = (test) => {
   test.done()
 }
 exports.density = (test) => {
+  const u = []
+  const o = [1]
+
   const fullEnv = environment({density:100, width:2, height:2},[1])
-  test.deepEqual(fullEnv.toJS(), [[1,1], [1,1]])
+  test.deepEqual(fullEnv.toJS(), [[o,o], [o,o]])
 
   const emptyEnv = environment({density:0, width:2, height:2},[1])
-  test.deepEqual(emptyEnv.toJS(), [[undefined,undefined], [undefined,undefined]])
+  test.deepEqual(emptyEnv.toJS(), [[u,u], [u,u]])
   test.done()
 }
 
 exports.step = (test) => {
-  const c = {
+  const c = [{
     step:() => [1,1]
-  }
-  const u = undefined
+  }]
+  const u = []
   const env = [[u, u, u],
                [u, c, u],
                [u, u, u]]
-  test.equal(environment().fromJS(env).step().get([1,1]), u)
-  test.equal(environment().fromJS(env).step().get([2,2]), c)
+  const modifiedEnv = environment().fromJS(env).step()
+  test.deepEqual(modifiedEnv.get([1,1]), u)
+  test.deepEqual(modifiedEnv.get([2,2]), c)
   test.done()
 }
 

@@ -9,13 +9,14 @@ const View = require('./view')
 const randomElement = (list) => list[(_.random(list.length - 1))]
 
 const returnWithPossibility = (percentage, val) => 
-   _.random(100) < percentage? val : undefined
+   _.random(100) < percentage? val : []
 
 const environmentParams = {
   width:100,
   height:100,
   density: 1
 }
+const sumCoordinates = ([x,y], [x1,y1]) => [(x + x1), (y + y1)]
 
 module.exports = clazz({
   constructor (userParams, cells) {
@@ -24,19 +25,20 @@ module.exports = clazz({
     const value = List().setSize(params.height)
       .map((row) => List().setSize(params.width))
     const matrix = Matrix(value)
-      .map(() => returnWithPossibility(params.density, randomElement(cells)))
+      .map(() => returnWithPossibility(params.density, [randomElement(cells)]))
     return {params, matrix}
   },
   matrix: Matrix().fromJS([[]]),
   step () {
-    return this
-    return this.reduce((newEnvironment, value, coordinates) => {
-      const moveCoordinates = value.react(this.view(coordinates, 1))
-      return newEnvironment.placeCell(coordinates, moveCoordinates, cell)
-    })
+    return this.reduce((newEnvironment, cells, coordinates) => {
+      const view = this.view(coordinates, 1)
+      return cells.reduce((newEnvironment, cell) => newEnvironment.placeCell(coordinates, cell.step(view), cell), newEnvironment)
+    }, this.map(()=> []))
   },
   placeCell (coordinates, moveCoordinates, cell) {
-         
+    newCoordinates = sumCoordinates(coordinates, moveCoordinates) 
+    const matrix = this.matrix.put({coordinates:newCoordinates, value:this.matrix.get(newCoordinates).concat(cell)})
+    return modify(this, {matrix})
   },
   view (coordinates, range) {
     return View(this.matrix, coordinates, range)
@@ -49,5 +51,6 @@ module.exports = clazz({
   fromJS:lens('matrix', 'fromJS'),
   toJS: alias('matrix', 'toJS'),
   reduce: lens('matrix', 'reduce'),
+  map: lens('matrix', 'map'),
   get: alias('matrix', 'get')
 })

@@ -7,8 +7,9 @@ module.exports = clazz({
   constructor (value) {
     return {value}
   },
-  fromJS(list) {
-    return modify(this, {value:fromJS(list)})
+  fromJS (array) {
+    const value = List(array).map((array) => List(array))
+    return modify(this, {value})
   },
   toJS() {
     return this.value.toJS()
@@ -32,7 +33,7 @@ module.exports = clazz({
         })
         return obj
     }, id) 
-    return modify(this, value)
+    return value
   },
   map (f) {
     return this.reduce((matrix, value, coordinates) => matrix.put({coordinates, value: f(value, coordinates)}), this)

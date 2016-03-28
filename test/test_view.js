@@ -32,7 +32,6 @@ exports.range = (test) =>  {
 
 exports.checkOffset = (test) => {
   const checkOffset = (coordinates) => {
-    debugger
     test.equal(View(matrix, coordinates, 1).get([0,0]), matrix.get(coordinates))
   }
   checkOffset([1,1])
@@ -59,7 +58,5 @@ exports.get = (test) => {
 exports.map = (test) => {
   const coordinates = [ [ -1, -1 ], [ 0, -1 ], [ 1, -1 ], [ 2, -1 ] ]
   test.deepEqual(six.map((val, coordinates) => coordinates).toJS()[0], coordinates)
-  
   test.done()
-  
 }
