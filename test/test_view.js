@@ -45,18 +45,24 @@ exports.checkOffset = (test) => {
 }
 
 const six = View(matrix, [1,1], 10)
-
 exports.get = (test) => {
   test.equal(six.get([0, -1]), 2)
   test.equal(six.get([1, 0]), 7)
   test.equal(six.get([2, 0]), 8)
   test.equal(six.get([3, 0]), undefined)
-
-  
   test.done()
 }
-exports.map = (test) => {
-  const coordinates = [ [ -1, -1 ], [ 0, -1 ], [ 1, -1 ], [ 2, -1 ] ]
-  test.deepEqual(six.map((val, coordinates) => coordinates).toJS()[0], coordinates)
+
+exports.reduce = (test) => {
+  const two = six.reduce((obj, cell, coordinates) => {
+    if(cell ===2) {
+      debugger
+      return coordinates
+    } else {
+      return obj
+    }
+  }, undefined)
+  test.deepEqual(two, [0,-1])
   test.done()
+
 }

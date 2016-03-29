@@ -37,6 +37,7 @@ module.exports = clazz({
   },
   placeCell (coordinates, moveCoordinates, cell) {
     newCoordinates = sumCoordinates(coordinates, moveCoordinates) 
+    const newCell = cell
     const matrix = this.matrix.put({coordinates:newCoordinates, value:this.matrix.get(newCoordinates).concat(cell)})
     return modify(this, {matrix})
   },

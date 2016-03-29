@@ -5,7 +5,6 @@ const inBounds = ([boundX, boundY], [x, y]) => {
 }
 
 const limit = (min, val, max) => val < min ? min : (val > max ? max : val)
-   
 
 module.exports = clazz({
   constructor( matrix, [x,y], range) {
@@ -16,22 +15,40 @@ module.exports = clazz({
     const value = matrix.slice({x: inBounds(bounds, [x - range, y - range]), y: inBounds(bounds, [x + range, y + range])})
     return {value, offsetX, offsetY}
   },
-  get([x,y]) {
-    return this.value.get([(x + this.offsetX), (y + this.offsetY)])
+  setValue: setter('value'),
+  get(coordinates) {
+    return this.value.get(this.addOffset(coordinates))
   },
+  put({coordinates, value}) {
+    const newValue = this.value.put({coordinates: this.addOffset(coordinates), value})
+    return this.setValue(newValue)
+  },
+  reduce (f, id) {
+    return this.value.reduce((id, val, [x, y]) => {
+      if (x === this.offsetX && y === this.offsetY) {
+        return id
+      } else {
+        return f(id, val, this.removeOffset([x,y]))
+      }
+    }, id)
+  }, 
   map (f) {
-    const value = this.value.map((val, [x, y]) => f(val, [(x - this.offsetX), (y - this.offsetY)]))
-    return modify(this, {value})
+    return this.reduce((view, value, coordinates) => {
+        return view.put({coordinates, value: f(value, coordinates)})
+    }, this)
   },
   addOffset ([x, y]){
+    return [(x + this.offsetX), (y + this.offsetY)]
+  },
+  removeOffset ([x, y]){
+    return [(x - this.offsetX), (y - this.offsetY)]
   },
   follow (objectCoordinates) {
-    
+    return objectCoordinates  
   },
   escapeFrom (objectCoordinates) {
 
   },
-  reduce: alias('value', 'reduce'),
   toJS: alias('value', 'toJS')
 })
 
