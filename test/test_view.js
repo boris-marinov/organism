@@ -6,14 +6,12 @@ const data = [[[1], [2], [3], [4]],
 const matrix = Matrix(data)
 
 const coordinates = [1, 1]
-const view = View(matrix, coordinates, 1).value
+const view = View(matrix, coordinates, 1)
 
 exports.constructor = (test) => {
-  test.equal(view.length, 8)
-  const matches = view
-    .map((val)=> val.cell)
-    .filter((val) => val === matrix.get(coordinates)[0] )
-  test.equal(matches.length, 0, 'The self element is not returned')
+  //const biggestNum = view.choose((currentEl, newEl) => if(currentEl > newEl) {return currentEl
+  //test.equal(biggestNum, [1,1])
+
   test.done()
 }
 

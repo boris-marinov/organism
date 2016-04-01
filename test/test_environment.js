@@ -33,7 +33,3 @@ exports.step = (test) => {
   test.deepEqual(modifiedEnv.get([2,2]), c)
   test.done()
 }
-
-
-
-
