@@ -1,9 +1,9 @@
 const View = require('../src/view')
-const Matrix = require('../src/matrix')
+const Matrix = require('persistent-matrix')
 const data = [[[1], [2], [3], [4]],
               [[5], [6], [7], [8]],
               [[9], [10],[11],[12]]]
-const matrix = Matrix().fromJS(data)
+const matrix = Matrix(data)
 
 const coordinates = [1, 1]
 const view = View(matrix, coordinates, 1).value

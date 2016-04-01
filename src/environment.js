@@ -1,7 +1,6 @@
-const {List, fromJS, toJS} = require('immutable')
 const {range} = require('lodash')
 const {clazz, getter, setter, alias, lens, modify} = require('persistent-clazz')
-const Matrix = require('./matrix')
+const Matrix = require('persistent-matrix')
 const _ = require('lodash')
 const View = require('./view')
 
@@ -22,13 +21,13 @@ module.exports = clazz({
   constructor (userParams, cells) {
     if (userParams === undefined) {return {}}
     const params = Object.assign({}, environmentParams, userParams)
-    const value = List().setSize(params.height)
-      .map((row) => List().setSize(params.width))
-    const matrix = Matrix(value)
+    console.log([params.width, params.height])
+    const matrix = Matrix().empty([params.width, params.height])
       .map(() => returnWithPossibility(params.density, [randomElement(cells)]))
     return {params, matrix}
   },
-  matrix: Matrix().fromJS([[]]),
+  matrix: Matrix(),
+  setMatrix: setter('matrix'),
   step () {
     return this.reduce((newEnvironment, cells, coordinates) => {
       const view = this.view(coordinates, 1)
@@ -38,7 +37,7 @@ module.exports = clazz({
   placeCell (coordinates, moveCoordinates, cell) {
     newCoordinates = sumCoordinates(coordinates, moveCoordinates) 
     const newCell = cell
-    const matrix = this.matrix.put({coordinates:newCoordinates, value:this.matrix.get(newCoordinates).concat(cell)})
+    const matrix = this.matrix.put(newCoordinates, this.matrix.get(newCoordinates).concat(cell))
     return modify(this, {matrix})
   },
   view (coordinates, range) {
@@ -49,7 +48,9 @@ module.exports = clazz({
       return row.map((cell) => cell !== undefined ? cell.toString():' ').join(' ')
     }).toJS().join('\n')
   },
-  fromJS:lens('matrix', 'fromJS'),
+  fromJS(matrix) {
+    return this.setMatrix(Matrix(matrix))
+  },
   toJS: alias('matrix', 'toJS'),
   reduce: lens('matrix', 'reduce'),
   map: lens('matrix', 'map'),
