@@ -28,7 +28,7 @@ exports.step = (test) => {
   const env = [[u, u, u],
                [u, c, u],
                [u, u, u]]
-  const modifiedEnv = environment().fromJS(env).step()
+  const modifiedEnv = environment.fromJS(env).step()
   test.deepEqual(modifiedEnv.get([1,1]), u)
   test.deepEqual(modifiedEnv.get([2,2]), c)
   test.done()

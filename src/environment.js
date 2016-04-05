@@ -17,17 +17,9 @@ const environmentParams = {
 }
 const sumCoordinates = ([x,y], [x1,y1]) => [(x + x1), (y + y1)]
 
-module.exports = clazz({
-  constructor (userParams, cells) {
-    if (userParams === undefined) {return {}}
-    const params = Object.assign({}, environmentParams, userParams)
-    console.log([params.width, params.height])
-    const matrix = Matrix().empty([params.width, params.height])
-      .map(() => returnWithPossibility(params.density, [randomElement(cells)]))
-    return {params, matrix}
-  },
-  matrix: Matrix(),
-  setMatrix: setter('matrix'),
+Environment = clazz({
+  matrix: Matrix([[]]),
+  params: {},
   step () {
     return this.reduce((newEnvironment, cells, coordinates) => {
       const view = this.view(coordinates, 1)
@@ -38,7 +30,7 @@ module.exports = clazz({
     newCoordinates = sumCoordinates(coordinates, moveCoordinates) 
     const newCell = cell
     const matrix = this.matrix.put(newCoordinates, this.matrix.get(newCoordinates).concat(cell))
-    return modify(this, {matrix})
+    return this.assign({matrix})
   },
   view (coordinates, range) {
     return View(this.matrix, coordinates, range)
@@ -48,11 +40,18 @@ module.exports = clazz({
       return row.map((cell) => cell !== undefined ? cell.toString():' ').join(' ')
     }).toJS().join('\n')
   },
-  fromJS(matrix) {
-    return this.setMatrix(Matrix(matrix))
-  },
   toJS: alias('matrix', 'toJS'),
   reduce: lens('matrix', 'reduce'),
   map: lens('matrix', 'map'),
   get: alias('matrix', 'get')
 })
+
+module.exports = (userParams, cells) => {
+  const params = Object.assign({}, environmentParams, userParams)
+  console.log([params.width, params.height])
+  const matrix = Matrix([[]]).empty([params.width, params.height])
+    .map(() => returnWithPossibility(params.density, [randomElement(cells)]))
+  return Environment({params, matrix})
+}
+
+module.exports.fromJS = (matrix) => Environment({matrix:Matrix(matrix)})
