@@ -1,10 +1,10 @@
 {
   "name": "organism",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start":"node --es_staging --harmony-destructuring src/main.js",
+    "start": "node --es_staging --harmony-destructuring src/main.js",
     "build": "babel src/ -d dist",
     "test": "node --harmony_destructuring --es_staging node_modules/nodeunit/bin/nodeunit"
   },
