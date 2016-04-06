@@ -9,8 +9,8 @@ exports.size = (test) => {
   test.done()
 }
 exports.density = (test) => {
-  const u = []
-  const o = [1]
+  const u = undefined
+  const o = 1
 
   const fullEnv = environment({density:100, width:2, height:2},[1])
   test.deepEqual(fullEnv.toJS(), [[o,o], [o,o]])
@@ -21,15 +21,17 @@ exports.density = (test) => {
 }
 
 exports.step = (test) => {
-  const c = [{
+  const c = {
     step:() => [1,1]
-  }]
-  const u = []
+  }
+  const u = undefined
   const env = [[u, u, u],
                [u, c, u],
                [u, u, u]]
   const modifiedEnv = environment.fromJS(env).step()
-  test.deepEqual(modifiedEnv.get([1,1]), u)
-  test.deepEqual(modifiedEnv.get([2,2]), c)
+  console.log(modifiedEnv.get([2,2]) === c)
+  debugger
+  test.equal(modifiedEnv.get([1,1]), u)
+  test.equal(modifiedEnv.get([2,2]), c)
   test.done()
 }

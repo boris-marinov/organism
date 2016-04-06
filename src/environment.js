@@ -8,7 +8,7 @@ const View = require('./view')
 const randomElement = (list) => list[(_.random(list.length - 1))]
 
 const returnWithPossibility = (percentage, val) => 
-   _.random(100) < percentage? val : []
+   _.random(100) < percentage? val : undefined
 
 const environmentParams = {
   width:100,
@@ -21,15 +21,19 @@ Environment = clazz({
   matrix: Matrix([[]]),
   params: {},
   step () {
-    return this.reduce((newEnvironment, cells, coordinates) => {
+    return this.reduce((newEnvironment, cell, coordinates) => {
       const view = this.view(coordinates, 1)
-      return cells.reduce((newEnvironment, cell) => newEnvironment.placeCell(coordinates, cell.step(view), cell), newEnvironment)
-    }, this.map(()=> []))
+      if (cell !== undefined) {
+        newEnvironment.placeCell(coordinates, cell.step(view), cell)
+      }
+      return newEnvironment
+    }, this.map(() => undefined))
   },
   placeCell (coordinates, moveCoordinates, cell) {
     newCoordinates = sumCoordinates(coordinates, moveCoordinates) 
     const newCell = cell
-    const matrix = this.matrix.put(newCoordinates, this.matrix.get(newCoordinates).concat(cell))
+    const matrix = this.matrix.put(newCoordinates, cell)
+    debugger
     return this.assign({matrix})
   },
   view (coordinates, range) {
@@ -50,7 +54,7 @@ module.exports = (userParams, cells) => {
   const params = Object.assign({}, environmentParams, userParams)
   console.log([params.width, params.height])
   const matrix = Matrix([[]]).empty([params.width, params.height])
-    .map(() => returnWithPossibility(params.density, [randomElement(cells)]))
+    .map(() => returnWithPossibility(params.density, randomElement(cells)))
   return Environment({params, matrix})
 }
 
