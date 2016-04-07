@@ -17,23 +17,32 @@ const environmentParams = {
 }
 const sumCoordinates = ([x,y], [x1,y1]) => [(x + x1), (y + y1)]
 
+const actionHandlers = {
+  attack: (environment, cell) => {},
+  follow:(coordinates, cell, action, environment) => {
+    return environment.placeCell(coordinates, action.coordinates, cell)
+  },
+  avoid: (coordinates, cell, action, environment) => {},
+  mate: () => {}
+}
+
 Environment = clazz({
   matrix: Matrix([[]]),
   params: {},
   step () {
-    return this.reduce((newEnvironment, cell, coordinates) => {
-      const view = this.view(coordinates, 1)
-      if (cell !== undefined) {
-        newEnvironment.placeCell(coordinates, cell.step(view), cell)
-      }
-      return newEnvironment
-    }, this.map(() => undefined))
+    return this.reduce((environment, cell, coordinates) => {
+  if (cell !== undefined) {
+    const view = this.view(coordinates, 1)
+    const action = cell.step(view)
+    return actionHandlers[action.action](coordinates, cell, action, environment)
+  } else {
+    return environment
+  }
+}, this.map(() => undefined))
   },
   placeCell (coordinates, moveCoordinates, cell) {
     newCoordinates = sumCoordinates(coordinates, moveCoordinates) 
-    const newCell = cell
     const matrix = this.matrix.put(newCoordinates, cell)
-    debugger
     return this.assign({matrix})
   },
   view (coordinates, range) {
@@ -52,7 +61,6 @@ Environment = clazz({
 
 module.exports = (userParams, cells) => {
   const params = Object.assign({}, environmentParams, userParams)
-  console.log([params.width, params.height])
   const matrix = Matrix([[]]).empty([params.width, params.height])
     .map(() => returnWithPossibility(params.density, randomElement(cells)))
   return Environment({params, matrix})

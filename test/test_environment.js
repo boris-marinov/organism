@@ -22,7 +22,7 @@ exports.density = (test) => {
 
 exports.step = (test) => {
   const c = {
-    step:() => [1,1]
+    step:() => ({ action: 'follow', coordinates: [1,1]})
   }
   const u = undefined
   const env = [[u, u, u],
@@ -30,7 +30,6 @@ exports.step = (test) => {
                [u, u, u]]
   const modifiedEnv = environment.fromJS(env).step()
   console.log(modifiedEnv.get([2,2]) === c)
-  debugger
   test.equal(modifiedEnv.get([1,1]), u)
   test.equal(modifiedEnv.get([2,2]), c)
   test.done()

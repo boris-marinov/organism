@@ -9,22 +9,22 @@ const intellect = {
 }
 
 module.exports = clazz({
-  constructor (genes) {
-    return this.set({
-      gender: _.random(1),
-      genes,
-      params:{
-        energy: 100,
-        health: 100,
-        age: 100,
-      }
-    })
+  gender:'m',
+  genes:{},
+  params:{
+    energy: 100,
+    health: 100,
+    age: 100,
   },
   step (view) {
-    return view.goTo(view[0])
+    debugger
   },
   toString() {
     return this.genes.symbol
   }
 })
 
+module.exports = (genes) => Cell({
+  gender: _.random(1),
+  genes,
+})
