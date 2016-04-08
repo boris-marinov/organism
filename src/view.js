@@ -2,16 +2,17 @@ const {clazz, getter, setter, alias, lens, modify} = require('persistent-clazz')
 const Matrix = require('persistent-matrix')
 
 const symbols = ['a','b','c']
+const flipCoordinates = ([x, y]) => [-x, -y]
 
 const Action = clazz({
   cell: {},
   coordinates:[0,0],
   action: 'noop',
   attack() { return this.assign({action: 'attack'}) },
-  avoid() { return this.assign({action: 'avoid'}) },
-  follow() { return this.assign({action: 'follow'}) },
   mate() { return this.assign({action: 'mate'}) },
-  communicate(symbol) { return this.assign({action: 'communicate', symbol}) }
+  communicate(symbol) { return this.assign({action: 'communicate', symbol}) },
+  avoid() { return this.assign({action: 'move', coordinates: flipCoordinates(this.coordinates)})},
+  follow() { return this.assign({action: 'move'}) },
 })
 
 const createAction = (cellImage) => (coordinates, cell) => Action({coordinates, cell:cellImage(cell)})

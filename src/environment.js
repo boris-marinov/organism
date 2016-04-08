@@ -15,15 +15,23 @@ const environmentParams = {
   height:100,
   density: 1
 }
+
+const cellSpeed = 1
+const cellRange = 1
+
 const sumCoordinates = ([x,y], [x1,y1]) => [(x + x1), (y + y1)]
+
+const max = (val, max) => val > max ? max: val
+
+const maxCoordinates =  ([x,y], maximumValue) => [max(x, maximumValue), max(y, maximumValue)]
+const paths = ([x,y]) =>[[x,y], [x-1, y], [x, y-1]]
 
 const actionHandlers = {
   attack: (environment, cell) => {},
-  follow:(coordinates, cell, action, environment) => {
-    return environment.placeCell(coordinates, action.coordinates, cell)
-  },
-  avoid: (coordinates, cell, action, environment) => {},
-  mate: () => {}
+  move:(coordinates, cell, action, environment) => {},
+  mate: () => {
+      
+  }
 }
 
 Environment = clazz({
@@ -31,22 +39,16 @@ Environment = clazz({
   params: {},
   step () {
     return this.reduce((environment, cell, coordinates) => {
-  if (cell !== undefined) {
-    const view = this.view(coordinates, 1)
-    const action = cell.step(view)
-    return actionHandlers[action.action](coordinates, cell, action, environment)
-  } else {
-    return environment
-  }
-}, this.map(() => undefined))
-  },
-  placeCell (coordinates, moveCoordinates, cell) {
-    newCoordinates = sumCoordinates(coordinates, moveCoordinates) 
-    const matrix = this.matrix.put(newCoordinates, cell)
-    return this.assign({matrix})
-  },
-  view (coordinates, range) {
-    return View(this.matrix, coordinates, range)
+      if (cell !== undefined) {
+        const view = View(this.matrix, coordinates, cellRange)
+        const action = cell.step(view)
+        const path = paths(maxCoordinates(action.coordinates, cellSpeed)).find((path) => 
+          environment.get(sumCoordinates(coordinates, path)) === undefined)
+        return environment.put(sumCoordinates(coordinates, path), cell)
+      } else {
+        return environment
+      }
+    }, this.map(() => undefined))
   },
   toString () {
     return this.matrix.value.map((row) => {
@@ -56,7 +58,8 @@ Environment = clazz({
   toJS: alias('matrix', 'toJS'),
   reduce: lens('matrix', 'reduce'),
   map: lens('matrix', 'map'),
-  get: alias('matrix', 'get')
+  get: alias('matrix', 'get'),
+  put: alias('matrix', 'put')
 })
 
 module.exports = (userParams, cells) => {
