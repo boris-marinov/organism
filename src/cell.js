@@ -8,7 +8,7 @@ const intellect = {
   
 }
 
-module.exports = clazz({
+const Cell = clazz({
   gender:'m',
   genes:{},
   params:{
@@ -17,7 +17,13 @@ module.exports = clazz({
     age: 100,
   },
   step (view) {
-    debugger
+    return view.reduce((defaultAction, obj) => { 
+      if (obj.cell.genes.symbol === this.genes.symbol) {
+      return obj.follow()
+      } else {
+        return defaultAction
+      }
+    }, { coordinates:[0,0]})
   },
   toString() {
     return this.genes.symbol
@@ -25,6 +31,6 @@ module.exports = clazz({
 })
 
 module.exports = (genes) => Cell({
-  gender: _.random(1),
+  gender: genders[_.random(1)],
   genes,
 })

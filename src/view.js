@@ -19,14 +19,14 @@ const createAction = (cellImage) => (coordinates, cell) => Action({coordinates, 
 
 const View = clazz({
   value:[],
-  reduce: lens('value', 'reduce')
+  reduce: alias('value', 'reduce')
 })
 
 module.exports = (cellImage) => (matrix, [x,y], range, message) => {
   const Action = createAction(cellImage)
   const value = matrix.neighbours([x,y], range)
     .reduce((list, cell, coordinates) => {
-      return list.concat(Action(coordinates, cell))
+      return cell === undefined ? list : list.concat([Action(coordinates, cell)])
     }, [])
   return View({value})
 }
